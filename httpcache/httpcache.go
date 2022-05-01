@@ -83,6 +83,18 @@ func NewTransport(c Cache) *Transport {
 	return &Transport{Cache: c, MarkCachedResponses: true}
 }
 
+// NewTransportWithOpts returns a new Transport with the
+// provided Cache implementation and MarkCachedResponses set to true
+// and other private options
+func NewTransportWithOpts(c Cache, cKey func(req *http.Request) string, isCacheable func(req *http.Request) bool) *Transport {
+	return &Transport{
+		Cache:               c,
+		MarkCachedResponses: true,
+		funcCacheKeyFromReq: cKey,
+		funcIsCacheable:     isCacheable,
+	}
+}
+
 // Client returns an *http.Client that caches responses.
 func (t *Transport) Client() *http.Client {
 	return &http.Client{Transport: t}
