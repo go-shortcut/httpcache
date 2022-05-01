@@ -38,8 +38,8 @@ type Cache interface {
 	Delete(key string)
 }
 
-// cacheKey returns the cache key for req.
-func cacheKey(req *http.Request) string {
+// defaultCacheKeyFunc returns the cache key for req.
+func defaultCacheKeyFunc(req *http.Request) string {
 	if req.Method == http.MethodGet {
 		return req.URL.String()
 	} else {
@@ -47,10 +47,15 @@ func cacheKey(req *http.Request) string {
 	}
 }
 
+// defaultIsCacheableFunc returns the cache key for req.
+func defaultIsCacheableFunc(req *http.Request) bool {
+	return (req.Method == "GET" || req.Method == "HEAD") && req.Header.Get("range") == ""
+}
+
 // CachedResponse returns the cached http.Response for req if present, and nil
 // otherwise.
-func CachedResponse(c Cache, req *http.Request) (resp *http.Response, err error) {
-	cachedVal, ok := c.Get(cacheKey(req))
+func CachedResponse(c Cache, key string, req *http.Request) (resp *http.Response, err error) {
+	cachedVal, ok := c.Get(key)
 	if !ok {
 		return
 	}
@@ -103,6 +108,8 @@ type Transport struct {
 	Cache     Cache
 	// If true, responses returned from the cache will be given an extra header, X-From-Cache
 	MarkCachedResponses bool
+	funcCacheKeyFromReq func(req *http.Request) string
+	funcIsCacheable     func(req *http.Request) bool
 }
 
 // NewTransport returns a new Transport with the
@@ -137,11 +144,20 @@ func varyMatches(cachedResp *http.Response, req *http.Request) bool {
 // to give the server a chance to respond with NotModified. If this happens, then the cached Response
 // will be returned.
 func (t *Transport) RoundTrip(req *http.Request) (resp *http.Response, err error) {
-	cacheKey := cacheKey(req)
-	cacheable := (req.Method == "GET" || req.Method == "HEAD") && req.Header.Get("range") == ""
+
+	if t.funcCacheKeyFromReq == nil {
+		t.funcCacheKeyFromReq = defaultCacheKeyFunc
+	}
+
+	if t.funcIsCacheable == nil {
+		t.funcIsCacheable = defaultIsCacheableFunc
+	}
+
+	cacheKey := t.funcCacheKeyFromReq(req)
+	cacheable := t.funcIsCacheable(req)
 	var cachedResp *http.Response
 	if cacheable {
-		cachedResp, err = CachedResponse(t.Cache, req)
+		cachedResp, err = CachedResponse(t.Cache, cacheKey, req)
 	} else {
 		// Need to invalidate an existing value
 		t.Cache.Delete(cacheKey)
