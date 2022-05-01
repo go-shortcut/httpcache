@@ -5,8 +5,8 @@ package memcache
 import (
 	"testing"
 
+	"../test"
 	"appengine/aetest"
-	"github.com/gregjones/httpcache/test"
 )
 
 func TestAppEngine(t *testing.T) {

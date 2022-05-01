@@ -1,10 +1,10 @@
 package test
 
 import (
+	"../httpcache"
+	"../memorycache"
 	"bytes"
 	"testing"
-
-	"github.com/gregjones/httpcache"
 )
 
 // Cache excercises a httpcache.Cache implementation.
@@ -32,4 +32,11 @@ func Cache(t *testing.T, cache httpcache.Cache) {
 	if ok {
 		t.Fatal("deleted key still present")
 	}
+}
+
+// NewMemoryCacheTransport returns a new Transport using the in-memory cache implementation
+func NewMemoryCacheTransport() *httpcache.Transport {
+	c := memorycache.NewMemoryCache()
+	t := httpcache.NewTransport(c)
+	return t
 }

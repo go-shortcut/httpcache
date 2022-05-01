@@ -1,6 +1,8 @@
 package httpcache
 
 import (
+	"../memorycache"
+	"../test"
 	"bytes"
 	"errors"
 	"flag"
@@ -38,7 +40,7 @@ func TestMain(m *testing.M) {
 }
 
 func setup() {
-	tp := NewMemoryCacheTransport()
+	tp := test.NewMemoryCacheTransport()
 	client := http.Client{Transport: tp}
 	s.transport = tp
 	s.client = client
@@ -166,7 +168,7 @@ func teardown() {
 }
 
 func resetTest() {
-	s.transport.Cache = NewMemoryCache()
+	s.transport.Cache = memorycache.NewMemoryCache()
 	clock = &realClock{}
 }
 
@@ -1207,7 +1209,7 @@ func TestStaleIfErrorRequest(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := NewMemoryCacheTransport()
+	tp := test.NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1252,7 +1254,7 @@ func TestStaleIfErrorRequestLifetime(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := NewMemoryCacheTransport()
+	tp := test.NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1315,7 +1317,7 @@ func TestStaleIfErrorResponse(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := NewMemoryCacheTransport()
+	tp := test.NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1359,7 +1361,7 @@ func TestStaleIfErrorResponseLifetime(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := NewMemoryCacheTransport()
+	tp := test.NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1413,7 +1415,7 @@ func TestStaleIfErrorKeepsStatus(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := NewMemoryCacheTransport()
+	tp := test.NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1457,7 +1459,7 @@ func TestClientTimeout(t *testing.T) {
 	}
 	resetTest()
 	client := &http.Client{
-		Transport: NewMemoryCacheTransport(),
+		Transport: test.NewMemoryCacheTransport(),
 		Timeout:   time.Second,
 	}
 	started := time.Now()
