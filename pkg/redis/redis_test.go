@@ -1,9 +1,9 @@
 package redis
 
 import (
+	"github.com/go-shortcut/httpcache/internal/testsuit"
 	"testing"
 
-	"../test"
 	"github.com/gomodule/redigo/redis"
 )
 
@@ -15,5 +15,5 @@ func TestRedisCache(t *testing.T) {
 	}
 	conn.Do("FLUSHALL")
 
-	test.Cache(t, NewWithClient(conn))
+	testsuit.Cache(t, NewWithClient(conn))
 }

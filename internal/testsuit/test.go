@@ -1,9 +1,8 @@
-package test
+package testsuit
 
 import (
-	"../httpcache"
-	"../memorycache"
 	"bytes"
+	"github.com/go-shortcut/httpcache/httpcache"
 	"testing"
 )
 
@@ -32,11 +31,4 @@ func Cache(t *testing.T, cache httpcache.Cache) {
 	if ok {
 		t.Fatal("deleted key still present")
 	}
-}
-
-// NewMemoryCacheTransport returns a new Transport using the in-memory cache implementation
-func NewMemoryCacheTransport() *httpcache.Transport {
-	c := memorycache.NewMemoryCache()
-	t := httpcache.NewTransport(c)
-	return t
 }

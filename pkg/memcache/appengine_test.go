@@ -1,11 +1,12 @@
+//go:build appengine
 // +build appengine
 
 package memcache
 
 import (
+	"github.com/go-shortcut/httpcache/internal/testsuit"
 	"testing"
 
-	"../test"
 	"appengine/aetest"
 )
 
@@ -16,5 +17,5 @@ func TestAppEngine(t *testing.T) {
 	}
 	defer ctx.Close()
 
-	test.Cache(t, New(ctx))
+	testsuit.Cache(t, New(ctx))
 }

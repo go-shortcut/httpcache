@@ -1,12 +1,11 @@
 package leveldbcache
 
 import (
+	"github.com/go-shortcut/httpcache/internal/testsuit"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
-
-	"../test"
 )
 
 func TestDiskCache(t *testing.T) {
@@ -21,5 +20,5 @@ func TestDiskCache(t *testing.T) {
 		t.Fatalf("New leveldb,: %v", err)
 	}
 
-	test.Cache(t, cache)
+	testsuit.Cache(t, cache)
 }

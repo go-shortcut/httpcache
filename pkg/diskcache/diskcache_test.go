@@ -1,11 +1,10 @@
 package diskcache
 
 import (
+	"github.com/go-shortcut/httpcache/internal/testsuit"
 	"io/ioutil"
 	"os"
 	"testing"
-
-	"../test"
 )
 
 func TestDiskCache(t *testing.T) {
@@ -15,5 +14,5 @@ func TestDiskCache(t *testing.T) {
 	}
 	defer os.RemoveAll(tempDir)
 
-	test.Cache(t, New(tempDir))
+	testsuit.Cache(t, New(tempDir))
 }

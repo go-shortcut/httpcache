@@ -2,7 +2,7 @@
 package redis
 
 import (
-	"../httpcache"
+	"github.com/go-shortcut/httpcache/httpcache"
 	"github.com/gomodule/redigo/redis"
 )
 

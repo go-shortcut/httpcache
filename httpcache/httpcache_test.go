@@ -1,11 +1,10 @@
 package httpcache
 
 import (
-	"../memorycache"
-	"../test"
 	"bytes"
 	"errors"
 	"flag"
+	"github.com/go-shortcut/httpcache/pkg/memorycache"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -39,8 +38,15 @@ func TestMain(m *testing.M) {
 	os.Exit(code)
 }
 
+// NewMemoryCacheTransport returns a new Transport using the in-memory cache implementation
+func NewMemoryCacheTransport() *Transport {
+	c := memorycache.NewMemoryCache()
+	t := NewTransport(c)
+	return t
+}
+
 func setup() {
-	tp := test.NewMemoryCacheTransport()
+	tp := NewMemoryCacheTransport()
 	client := http.Client{Transport: tp}
 	s.transport = tp
 	s.client = client
@@ -1209,7 +1215,7 @@ func TestStaleIfErrorRequest(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := test.NewMemoryCacheTransport()
+	tp := NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1254,7 +1260,7 @@ func TestStaleIfErrorRequestLifetime(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := test.NewMemoryCacheTransport()
+	tp := NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1317,7 +1323,7 @@ func TestStaleIfErrorResponse(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := test.NewMemoryCacheTransport()
+	tp := NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1361,7 +1367,7 @@ func TestStaleIfErrorResponseLifetime(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := test.NewMemoryCacheTransport()
+	tp := NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1415,7 +1421,7 @@ func TestStaleIfErrorKeepsStatus(t *testing.T) {
 		},
 		err: nil,
 	}
-	tp := test.NewMemoryCacheTransport()
+	tp := NewMemoryCacheTransport()
 	tp.Transport = &tmock
 
 	// First time, response is cached on success
@@ -1459,7 +1465,7 @@ func TestClientTimeout(t *testing.T) {
 	}
 	resetTest()
 	client := &http.Client{
-		Transport: test.NewMemoryCacheTransport(),
+		Transport: NewMemoryCacheTransport(),
 		Timeout:   time.Second,
 	}
 	started := time.Now()
